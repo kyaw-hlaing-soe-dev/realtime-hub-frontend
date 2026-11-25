@@ -96,6 +96,31 @@ describe('domain normalizers', () => {
     expect(matches[0]?.id).toBe('123');
     expect(matches[0]?.detailMatchId).toBe('123');
     expect(matches[0]?.status).toBe('finished');
+    expect(matches[0]?.competition.name).toBe('Saved match');
+  });
+
+  it('normalizes Render backend /matches payload with sport fallback', () => {
+    const matches = normalizeSavedMatches([
+      {
+        id: 1,
+        externalId: null,
+        sport: 'football',
+        homeTeam: 'Manchester United',
+        awayTeam: 'Liverpool',
+        status: 'finished',
+        startTime: '2026-11-18T14:00:00.000Z',
+        endTime: '2026-11-18T16:00:00.000Z',
+        homeScore: 0,
+        awayScore: 0,
+        metadata: null,
+      },
+    ]);
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.competition.name).toBe('Football');
+    expect(matches[0]?.homeScore).toBe(0);
+    expect(matches[0]?.awayScore).toBe(0);
+    expect(matches[0]?.status).toBe('finished');
   });
 
   it('sorts and deduplicates commentary chronologically', () => {

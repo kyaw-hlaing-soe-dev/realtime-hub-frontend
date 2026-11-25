@@ -241,10 +241,22 @@ export function normalizeMatchItem(
       ? explicitMatchId ?? resolvedId
       : undefined;
 
+  const metadataObj = isRecord(raw.metadata) ? raw.metadata : null;
+  const sportText = asString(raw.sport);
+  const formattedSport = sportText
+    ? sportText.charAt(0).toUpperCase() + sportText.slice(1)
+    : undefined;
+  const savedFallbackName =
+    asString(metadataObj?.competition) ??
+    asString(metadataObj?.league) ??
+    formattedSport ??
+    'Saved match';
+
   const competition = normalizeCompetition(
     raw,
     options.defaultLeagueId ?? DEFAULT_LEAGUE_ID,
-    options.defaultLeagueName ?? DEFAULT_LEAGUE_NAME,
+    options.defaultLeagueName ??
+      (options.isSavedMatch ? savedFallbackName : DEFAULT_LEAGUE_NAME),
   );
 
   const matchdayValue = raw.matchday ?? raw.round;
