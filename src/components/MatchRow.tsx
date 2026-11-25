@@ -36,7 +36,7 @@ function CenterScoreOrTime({ match }: { match: MatchItem }) {
   if (hasScore) {
     return (
       <div
-        className="tabular-nums-strict inline-flex min-w-[76px] items-center justify-center gap-1.5 rounded-[10px] border border-[#2A3730] bg-[#19231E] px-2.5 py-1 text-[16px] leading-[22px] font-semibold text-[#F2F6F3]"
+        className="tabular-nums-strict inline-flex min-w-[76px] shrink-0 items-center justify-center gap-1.5 rounded-[10px] border border-[#2A3730] bg-[#19231E] px-2.5 py-1 text-[16px] leading-[22px] font-semibold text-[#F2F6F3]"
         aria-label={`Score ${match.homeScore} to ${match.awayScore}`}
       >
         <span>{match.homeScore}</span>
@@ -50,7 +50,7 @@ function CenterScoreOrTime({ match }: { match: MatchItem }) {
 
   return (
     <div
-      className="tabular-nums-strict inline-flex min-w-[76px] items-center justify-center rounded-[10px] border border-[#2A3730] bg-[#0B100E] px-2.5 py-1 text-[14px] leading-[20px] font-semibold text-[#F2F6F3]"
+      className="tabular-nums-strict inline-flex min-w-[76px] shrink-0 items-center justify-center rounded-[10px] border border-[#2A3730] bg-[#0B100E] px-2.5 py-1 text-[14px] leading-[20px] font-semibold text-[#F2F6F3]"
       aria-label={`Kickoff ${kickoff}`}
     >
       <time dateTime={match.kickoffAt || undefined}>{kickoff}</time>
