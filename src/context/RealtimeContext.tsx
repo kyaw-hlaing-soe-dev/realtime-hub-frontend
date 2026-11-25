@@ -161,7 +161,31 @@ export function RealtimeProvider({
   const [activeLeagueId, setActiveLeagueIdState] = useState<number>(
     settings.defaultLeagueId,
   );
+  const [knownCompetitions, setKnownCompetitions] = useState<CompetitionInfo[]>(
+    [{ id: DEFAULT_LEAGUE_ID, name: DEFAULT_LEAGUE_NAME }],
+  );
   const [politeAnnouncement, setPoliteAnnouncement] = useState<string>('');
+
+  const mergeCompetitions = useCallback((incoming: CompetitionInfo[]) => {
+    if (incoming.length === 0) return;
+    setKnownCompetitions((prev) => {
+      const map = new Map<string, CompetitionInfo>();
+      for (const item of prev) {
+        map.set(String(item.id), item);
+      }
+      for (const item of incoming) {
+        map.set(String(item.id), item);
+      }
+      const next = Array.from(map.values());
+      if (
+        next.length === prev.length &&
+        next.every((c, idx) => String(c.id) === String(prev[idx]?.id) && c.name === prev[idx]?.name)
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, []);
 
   const socketClientRef = useRef<RealtimeSocketClient | null>(null);
   const activeLeagueIdRef = useRef<number>(activeLeagueId);
@@ -185,6 +209,7 @@ export function RealtimeProvider({
         baseUrl: settings.apiBaseUrl,
       });
       setFixturesSnapshot(snapshot);
+      mergeCompetitions(snapshot.availableCompetitions);
       setIsSnapshotStale(false);
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
@@ -253,6 +278,7 @@ export function RealtimeProvider({
         },
         onFixturesSnapshot: (snapshot) => {
           setFixturesSnapshot(snapshot);
+          mergeCompetitions(snapshot.availableCompetitions);
           setFixturesLoading(false);
           setFixturesError(null);
           setIsSnapshotStale(false);
@@ -269,6 +295,7 @@ export function RealtimeProvider({
         },
         onFixturesUpdated: (snapshot) => {
           setFixturesSnapshot(snapshot);
+          mergeCompetitions(snapshot.availableCompetitions);
           setFixturesLoading(false);
           setFixturesError(null);
           setIsSnapshotStale(false);
@@ -304,6 +331,11 @@ export function RealtimeProvider({
     });
 
     socketClientRef.current = client;
+    for (const [matchId, listeners] of commentaryListenersRef.current.entries()) {
+      for (let i = 0; i < listeners.size; i += 1) {
+        client.subscribeMatch(matchId);
+      }
+    }
     client.connect();
 
     return () => {
@@ -402,7 +434,7 @@ export function RealtimeProvider({
       savedMatchesLoading,
       savedMatchesError,
       refreshSavedMatches,
-      availableCompetitions: fixturesSnapshot.availableCompetitions,
+      availableCompetitions: knownCompetitions,
       activeLeagueId,
       setActiveLeagueId,
       subscribeToMatchCommentary,
@@ -426,6 +458,7 @@ export function RealtimeProvider({
       savedMatchesLoading,
       savedMatchesError,
       refreshSavedMatches,
+      knownCompetitions,
       activeLeagueId,
       setActiveLeagueId,
       subscribeToMatchCommentary,
