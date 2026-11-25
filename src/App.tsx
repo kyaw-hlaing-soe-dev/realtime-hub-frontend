@@ -1,9 +1,31 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AppShell } from './components/AppShell';
+import { RealtimeProvider } from './context/RealtimeContext';
+import { FixturesPage } from './pages/FixturesPage';
+import { MatchDetailPage } from './pages/MatchDetailPage';
+import { MatchesPage } from './pages/MatchesPage';
+import { OverviewPage } from './pages/OverviewPage';
+
+export function AppRoutes() {
+  return (
+    <AppShell>
+      <Routes>
+        <Route path="/" element={<OverviewPage />} />
+        <Route path="/fixtures" element={<FixturesPage />} />
+        <Route path="/matches" element={<MatchesPage />} />
+        <Route path="/matches/:id" element={<MatchDetailPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AppShell>
+  );
+}
+
 export function App() {
   return (
-    <div className="min-h-screen bg-[#0B100E] text-[#F2F6F3]">
-      <main className="mx-auto max-w-[1200px] px-4 py-4 md:p-8">
-        <h1 className="text-[28px] leading-[34px] font-semibold">Match hub</h1>
-      </main>
-    </div>
+    <BrowserRouter>
+      <RealtimeProvider>
+        <AppRoutes />
+      </RealtimeProvider>
+    </BrowserRouter>
   );
 }
