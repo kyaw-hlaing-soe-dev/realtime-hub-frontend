@@ -47,5 +47,12 @@ npm run build      # Production build
 Optional environment variables:
 
 - `VITE_BACKEND_URL` — Vite dev proxy target (default `http://localhost:3000`)
-- `VITE_API_BASE_URL` — Explicit HTTP API base URL
+- `VITE_API_BASE_URL` — Explicit HTTP API base URL (use `/api` on Vercel to proxy via `vercel.json` and avoid cross-origin CORS issues)
 - `VITE_WS_URL` — Explicit WebSocket URL (default resolves `/ws` from `window.location`)
+
+## Vercel Deployment
+
+`vercel.json` includes SPA fallback routing and an `/api/:path*` rewrite proxy to `https://realtime-hub-backend.onrender.com/:path*`. Set these environment variables in Vercel:
+
+- `VITE_API_BASE_URL=/api`
+- `VITE_WS_URL=wss://realtime-hub-backend.onrender.com/ws`

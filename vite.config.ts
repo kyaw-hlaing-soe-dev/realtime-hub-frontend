@@ -11,6 +11,11 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: {
       proxy: {
+        '/api': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
         '/football': {
           target: apiProxyTarget,
           changeOrigin: true,
